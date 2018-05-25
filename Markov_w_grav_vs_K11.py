@@ -103,16 +103,16 @@ yy=2e-5*xx**-1
 ax.plot(np.log10(xx),np.log10(yy),c='k',ls='--',lw=.001)
 ax.text(.6,.9,r'$t_{ff,0}=0.7\,\tau_{\rm eddy}$',transform=ax.transAxes,fontsize=13,color='k')
 
-f=np.loadtxt('alexei_t_0.dat')
+f=np.loadtxt('K11_t_000.dat')
 y_numbers=f[:,1]+.7
 x_numbers=f[:,0]
 ax.plot(x_numbers,y_numbers,ls='dashed',lw=2,label=r'$\rm K11, t=0$',c='k')#color=cm.jet(0.)
 
-f=np.loadtxt('alexei_t_green.dat')
+f=np.loadtxt('K11_t_018.dat')
 y_numbers=f[:,1]+.7
 x_numbers=f[:,0]
 ax.plot(x_numbers,y_numbers,label=r'$\rm K11, t=0.18\tau_{Eddy}$',ls='dashed',lw=2,c='k')#color=cm.jet(0.18/.3),lw=2)
-f=np.loadtxt('Alexei.dat')
+f=np.loadtxt('K11_t_030.dat')
 y_numbers=(np.log10(f[:,2])+1.824)
 ax.plot(np.log10(f[:,1]),y_numbers-y_numbers.max(),label=r'$\rm K11, t=0.3\tau_{Eddy}$',ls='--',lw=2,c='k')#,color=cm.jet(1.),lw=2)
 
