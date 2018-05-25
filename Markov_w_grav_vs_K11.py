@@ -93,16 +93,6 @@ for step in range(0,N_steps):
     print(line)
     time+=dt
     pp+=1
-#ff.close()
-#ax.colorbar()
-xx=np.linspace(-5,5,201)
-Nfiles=count_number_of_files(Mach_number,1)
-for i in range(24,Nfiles):
-	number = str(i).zfill(4)
-	filename='s_s2_1_'+number+'.dat'
-	f=np.loadtxt('../Data/'+dir+'/'+filename)
-	VW_pdf=f[7:7+201]
-	MW_pdf=np.exp(xx)*VW_pdf
 	
 xx=np.logspace(-1,10)
 yy=2*xx**-1.695
