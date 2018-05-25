@@ -23,12 +23,8 @@ from matplotlib import rc
 rc('font',**{'family':'Times New Roman'})
 
 Mach_number=6
-s0=0.88
-s0=2/3*0.88
 s0=0.65
 var=2.*s0
-
-G=6.67e-8
 stretch=2.
 sigma=var**.5
 s_k=1.5*s0
@@ -46,23 +42,6 @@ x=np.zeros(N_sample)
 fig = plt.figure()
 ax = fig.add_axes([0.15,0.15,0.7,.8])
 
-x_=np.ones(1000)*4
-y_=np.ones(1000)*-8
-z_=np.linspace(0,.3,1000)
-im=ax.scatter(x_,y_,c=z_, vmin=0, vmax=0.3,cmap=cm.jet)
-#plt.colorbar(im)
-fig.subplots_adjust(right=.8)
-cbar_ax = fig.add_axes([.87, 0.15, 0.02, 0.7])
-fig.colorbar(im, cax=cbar_ax)
-cbar_ax.set_label(r'$t/t_{\rm Eddy}$')
-
-caxY = cbar_ax.yaxis
-ylab = caxY.get_label()
-inv = ax.transAxes.inverted()
-R = fig.canvas.get_renderer()
-ticklabelbbox = inv.transform( caxY.get_ticklabel_extents(R)[1].get_points() )
-xpos, ypos = np.max(ticklabelbbox[:,0]), (3/4)
-caxY.set_label_coords( .87 ,.8 , transform = ax.transAxes)
 
 x=np.random.normal(s0,sigma,N_sample)
 dt0=1e-3#/tau_Eddy  # timestep of the simulation in T_eddy units
@@ -77,7 +56,6 @@ time=dt0 # to avoid division by zero, we set the starting time of the simulation
 #while time<total_time-10*dt0:
 def model(x,slope,offset):
     return slope*x+offset
-alpha=0
 pp=0
 for step in range(0,N_steps):
     x_before=np.copy(x)
@@ -91,8 +69,7 @@ for step in range(0,N_steps):
     else:
         x=x+n*(D*dt)**.5-(k*(x-s_k))*dt #move all cells according to Langevin without gravity
         #Then add the self-gravity to the subset identified in ind=(1> xxx) line above.
-        x[ind]+=dt/t_ff* (np.exp(x[ind]))**.5 * 3.*np.pi/2. *\
-            (1-alpha*(np.exp(-x[ind])*(t_ff/time)**2.)**(1./3))**.5
+        x[ind]+=dt/t_ff* (np.exp(x[ind]))**.5 * 3.*np.pi/2.
     #remove cells whose density is infinity from the list.
     including_ind=((np.logical_not(np.isnan(x))) & (x!=np.inf) & (x!=-np.inf)).nonzero()[0]
     x_before= x_before[including_ind]
@@ -116,6 +93,16 @@ for step in range(0,N_steps):
     print(line)
     time+=dt
     pp+=1
+#ff.close()
+#ax.colorbar()
+xx=np.linspace(-5,5,201)
+Nfiles=count_number_of_files(Mach_number,1)
+for i in range(24,Nfiles):
+	number = str(i).zfill(4)
+	filename='s_s2_1_'+number+'.dat'
+	f=np.loadtxt('../Data/'+dir+'/'+filename)
+	VW_pdf=f[7:7+201]
+	MW_pdf=np.exp(xx)*VW_pdf
 	
 xx=np.logspace(-1,10)
 yy=2*xx**-1.695
@@ -125,9 +112,6 @@ yy=2e-5*xx**-1
 #yy=2e-5*xx**(-var)
 ax.plot(np.log10(xx),np.log10(yy),c='k',ls='--',lw=.001)
 ax.text(.6,.9,r'$t_{ff,0}=0.7\,\tau_{\rm eddy}$',transform=ax.transAxes,fontsize=13,color='k')
-#ax.text(.6,.8,r'$t_{final}=$'+str(total_time)+r'$\tau_{\rm Eddy}$',transform=ax.transAxes,fontsize=13,color='k')
-#ax.text(.6,.8,r'$\rm t_{final}=0.30\,\tau_{Eddy}$',transform=ax.transAxes,fontsize=13,color='k')
-#ax.text(.6,.7,r'$N=2/F(\alpha)$',transform=ax.transAxes,fontsize=13,color='k')
 
 f=np.loadtxt('alexei_t_0.dat')
 y_numbers=f[:,1]+.7
@@ -149,8 +133,4 @@ ax.set_ylim(-16,0.1)
 
 
 plt.legend(loc=3,frameon=False)
-#plt.tight_layout()
 plt.savefig('Markov_vs_K11.pdf')
-
-#cbar.set_clim(0, 0.3)
-
